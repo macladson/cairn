@@ -1,0 +1,51 @@
+# Optional, for same-repo setups only: comment on pull requests with live Cairn findings on the changed files.
+# Copy to .github/workflows/ in the project repo. It downloads Cairn from CAIRN_KIT, or uses .cairn/cli/cairn.py
+# when the repo has a copy.
+# Runs only when a PR is opened or marked ready, not on every push, to keep CI minutes down.
+name: cairn-pr
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: cairn-pr-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pr-context:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      CAIRN_KIT: ${{ vars.CAIRN_KIT || 'macladson/cairn' }}
+      CAIRN_KIT_REF: ${{ vars.CAIRN_KIT_REF || 'main' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch the ledger
+        run: git fetch origin "+refs/heads/cairn/ledger:refs/remotes/origin/cairn/ledger" || echo "no ledger yet"
+      - name: Get Cairn
+        run: |
+          if [ -f .cairn/cli/cairn.py ]; then cp .cairn/cli/cairn.py "$RUNNER_TEMP/cairn.py"
+          else git clone --quiet --depth 1 --branch "$CAIRN_KIT_REF" "https://github.com/$CAIRN_KIT.git" "$RUNNER_TEMP/kit" \
+               && cp "$RUNNER_TEMP/kit/cli/cairn.py" "$RUNNER_TEMP/cairn.py"; fi
+      - name: Findings touching this PR
+        id: ctx
+        run: |
+          python3 "$RUNNER_TEMP/cairn.py" --offline touching \
+            --diff "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
+            --markdown > cairn-pr.md || true
+          echo "size=$(wc -c < cairn-pr.md)" >> "$GITHUB_OUTPUT"
+      - name: Comment (edits the previous Cairn comment when there is one)
+        if: steps.ctx.outputs.size != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr comment "$PR" --body-file cairn-pr.md --edit-last 2>/dev/null \
+            || gh pr comment "$PR" --body-file cairn-pr.md \
+            || echo "could not comment (fork PRs get a read-only token)"

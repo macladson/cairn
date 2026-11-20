@@ -1,0 +1,15 @@
+{
+  "description": "Cairn: inject shared context at session start and when files in a new area are opened; record token use at session end",
+  "hooks": {
+    "SessionStart": [
+      {"hooks": [{"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/bin/cairn\" hook session-start", "timeout": 30}]}
+    ],
+    "PostToolUse": [
+      {"matcher": "Read|Edit|Write|MultiEdit|NotebookEdit|Grep|Glob|Bash",
+       "hooks": [{"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/bin/cairn\" hook tool", "timeout": 15}]}
+    ],
+    "SessionEnd": [
+      {"hooks": [{"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/bin/cairn\" hook session-end --harness claude-code", "timeout": 30}]}
+    ]
+  }
+}

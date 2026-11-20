@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "areas": [
+    {"id": "core", "globs": ["src/**"], "description": "All source code"},
+    {"id": "docs", "globs": ["docs/**"], "description": "Documentation"},
+    {"id": "root", "globs": ["*"], "description": "Root files"}
+  ],
+  "lenses": [
+    {"id": "correctness", "description": "Wrong results"},
+    {"id": "dos", "description": "Resource exhaustion", "sensitive": true},
+    {"id": "docs", "description": "Docs"}
+  ],
+  "facets": {"platform": {"description": "Platforms affected", "values": ["linux", "macos"]}},
+  "benchmarks": [],
+  "glossary": {"widget": "A thing the toy project makes"}
+}

@@ -1,0 +1,9 @@
+{
+  "name": "cairn",
+  "version": "0.1.0",
+  "description": "Shared context between agents: area notes, findings, coverage and work in progress from a Cairn ledger, injected automatically and kept fresh.",
+  "license": "MIT",
+  "author": {
+    "name": "Cairn maintainers"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Security pass over auth after the session refactor",
+  "lens": "security",
+  "areas": ["auth"],
+  "coverage": [
+    {"area": "auth", "lens": "security", "depth": "deep", "result": "issues",
+     "not_examined": "The OAuth callback in src/auth/oauth.py and anything behind the SSO feature flag."},
+    {"area": "auth", "lens": "concurrency", "depth": "skim", "result": "clean"}
+  ],
+  "links": {"cites": []},
+  "body": "Read every handler in src/auth. Checked token comparison, cookie flags and CSRF handling."
+}

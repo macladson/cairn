@@ -1,0 +1,16 @@
+{
+  "main_branch": "develop",
+  "release_branch": "release",
+  "code_repo": "example/widget",
+  "public": false,
+  "repro_runners": [
+    "pytest {path}::{test}"
+  ],
+  "repro_timeout": 1800,
+  "freshness": {
+    "max_days": 30,
+    "max_area_commits": 40,
+    "covered_max_commits": 10,
+    "covered_max_days": 30
+  }
+}

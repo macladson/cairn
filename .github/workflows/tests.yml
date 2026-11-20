@@ -1,0 +1,26 @@
+# Tests for the kit itself. (The daily job for a project's notes is ci/cairn-daily.yml; it doesn't run here.)
+name: tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML (used only to run the daily job's steps in the setup test)
+        run: python -m pip install --quiet pyyaml
+      - name: Git identity for the test repos
+        run: git config --global user.name ci && git config --global user.email ci@example.com
+      - name: Simulation
+        run: python3 tests/test_cairn.py
+      - name: Stress
+        run: python3 tests/stress_cairn.py 12 6 24
+      - name: Getting started, step by step and with the scripts
+        run: sh tests/test_getting_started.sh

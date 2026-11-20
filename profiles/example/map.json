@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "areas": [
+    {"id": "sync", "globs": ["server/sync/**"], "description": "Keeps replicas in step: queues, retries, peers", "owners": []},
+    {"id": "server", "globs": ["server/**"], "description": "The server, apart from sync", "owners": []},
+    {"id": "types", "globs": ["core/types/**"], "description": "Shared data types and their encoding", "owners": []},
+    {"id": "core", "globs": ["core/**"], "description": "Shared logic used by the server and the client", "owners": []},
+    {"id": "signing", "globs": ["client/signing/**"], "description": "Key handling and signing in the client", "owners": []},
+    {"id": "client", "globs": ["client/**"], "description": "The client, apart from signing", "owners": []},
+    {"id": "docs", "globs": ["docs/**", "*.md"], "description": "Documentation", "owners": []},
+    {"id": "root", "globs": ["*"], "description": "Other files at the repository root", "owners": []}
+  ],
+  "lenses": [
+    {"id": "correctness", "description": "Wrong results, broken invariants, logic errors"},
+    {"id": "security", "description": "Vulnerabilities, unsafe input handling, secrets, authn/authz", "sensitive": true},
+    {"id": "performance", "description": "Latency, throughput, memory, algorithmic cost"},
+    {"id": "reliability", "description": "Error handling, retries, timeouts, failure modes"},
+    {"id": "concurrency", "description": "Races, deadlocks, ordering, idempotency"},
+    {"id": "tests", "description": "Missing, flaky or misleading tests"},
+    {"id": "api", "description": "Interface design, compatibility, contracts"},
+    {"id": "dependencies", "description": "Third-party packages: versions, licences, CVEs"},
+    {"id": "build", "description": "Build, packaging, CI, tooling"},
+    {"id": "docs", "description": "Documentation that is missing, wrong or stale"},
+    {"id": "data-loss", "description": "Anything that could lose or corrupt stored data", "sensitive": true}
+  ],
+  "facets": {
+    "platform": {"description": "Platforms the record applies to", "values": ["linux", "macos", "windows"]},
+    "rule": {
+      "description": "Project rule the code breaks",
+      "values": ["no-blocking-io", "todo-needs-issue"],
+      "details": {
+        "no-blocking-io": "Never block inside async code",
+        "todo-needs-issue": "Every TODO links an issue"
+      }
+    }
+  },
+  "benchmarks": [
+    {
+      "id": "sync-throughput",
+      "command": "python -m benchmarks.sync",
+      "area": "sync",
+      "description": "Items synced per second against a local peer",
+      "metrics": [{"name": "items_per_second", "unit": "1/s", "better": "higher"}]
+    }
+  ],
+  "glossary": {
+    "peer": "Another server this one syncs with",
+    "replica": "A server's copy of the data"
+  }
+}

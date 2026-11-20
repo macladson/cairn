@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="1300" viewBox="0 0 1340 1300" font-family="Figtree, Inter, 'Noto Sans', 'DejaVu Sans', Arial, sans-serif" font-size="20" fill="#1a1a1a">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L12,6 L0,12 z" fill="#c4c7b8"/>
+    </marker>
+    <style>
+      .box { fill: #ffffff; stroke: #c9cbbf; stroke-width: 2; }
+      .hl { fill: #e4eef8; stroke: #2a7de1; stroke-width: 3; }
+      .t { font-weight: 600; font-size: 22px; }
+      .g { fill: #5c5c5c; }
+      .line { stroke: #c4c7b8; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .mid { text-anchor: middle; }
+    </style>
+  </defs>
+  <rect width="1340" height="1300" fill="#ffffff"/>
+
+  <text x="44" y="60" font-size="26" font-weight="600">Agents in any harness share one ledger through the same CLI</text>
+  <text x="44" y="100" class="g">Hooks hand each session the part that matters; a write that does not build on the latest commit is rejected</text>
+
+  <!-- harnesses -->
+  <rect class="box" x="64" y="141" width="282" height="127" rx="12"/>
+  <text class="t mid" x="205" y="184">Claude Code</text>
+  <text class="g mid" x="205" y="212">plugin: hooks, skill</text>
+  <text class="g mid" x="205" y="240">tokens from transcript</text>
+
+  <rect class="box" x="375" y="141" width="282" height="127" rx="12"/>
+  <text class="t mid" x="516" y="184">Codex</text>
+  <text class="g mid" x="516" y="212">hooks, AGENTS.md</text>
+  <text class="g mid" x="516" y="240">or the MCP server</text>
+
+  <rect class="box" x="686" y="141" width="282" height="127" rx="12"/>
+  <text class="t mid" x="827" y="184">OpenCode, Pi</text>
+  <text class="g mid" x="827" y="212">plugin, extension</text>
+  <text class="g mid" x="827" y="240">experimental</text>
+
+  <rect class="box" x="998" y="141" width="282" height="127" rx="12"/>
+  <text class="t mid" x="1139" y="184">Any other agent</text>
+  <text class="g mid" x="1139" y="212">AGENTS.md section</text>
+  <text class="g mid" x="1139" y="240">CLI or cairn mcp</text>
+
+  <path class="line" d="M205,269 V322"/>
+  <path class="line" d="M516,269 V322"/>
+  <path class="line" d="M827,269 V322"/>
+  <path class="line" d="M1139,269 V322"/>
+  <text class="g" x="842" y="303">hook events, shell or MCP</text>
+
+  <!-- CLI -->
+  <rect class="box" x="64" y="325" width="1216" height="184" rx="12"/>
+  <text class="t" x="92" y="367">cairn CLI: one Python file, the same in every harness</text>
+  <text x="92" y="396">context: orientation at session start; an area’s note and live findings when its files are first opened</text>
+  <text x="92" y="424">reads: brief, check, show, search, coverage · writes: claim, submit, note, review, task, work</text>
+  <text class="g" x="92" y="453">each write: fetch the tip, build the commit off-tree, push without --force, retry if rejected</text>
+  <text class="g" x="92" y="481">metrics: tokens per session, compared against a holdout that gets no context</text>
+
+  <path class="line" d="M248,510 V591"/>
+  <text class="g" x="262" y="562">reads code in your own clone</text>
+  <text class="g" x="1110" y="562">fetch, then push</text>
+
+  <!-- the project -->
+  <rect class="box" x="64" y="594" width="367" height="183" rx="12"/>
+  <text class="t" x="92" y="637">the project’s repo</text>
+  <text x="92" y="665">public; Cairn never writes</text>
+  <text x="92" y="693">development branch</text>
+  <text x="92" y="721">release branch</text>
+  <text class="g" x="92" y="750">each person clones it</text>
+
+  <!-- notes repo -->
+  <rect class="box" x="474" y="594" width="806" height="643" rx="12"/>
+  <text class="t" x="502" y="633">your-org/project-notes (private)</text>
+
+  <rect class="hl" x="502" y="658" width="750" height="211" rx="12"/>
+  <text class="t" x="531" y="700">cairn/ledger branch (orphan)</text>
+  <text x="531" y="729">map.json, ledger.json, GUIDE.md: vocabulary, settings, rules</text>
+  <text x="531" y="757">records/: findings, notes, reports, benchmarks, tasks, changes</text>
+  <text x="531" y="785">patches beside change records; claims/: one lease per key</text>
+  <text x="531" y="813">metrics/: one file per person, published by them</text>
+  <text x="531" y="842">README.md: the dashboard, written by the daily job</text>
+
+  <rect class="box" x="502" y="898" width="360" height="127" rx="12"/>
+  <text class="t" x="531" y="941">development, release</text>
+  <text x="531" y="969">mirrors of upstream</text>
+  <text class="g" x="531" y="997">what the daily job reads</text>
+
+  <rect class="box" x="891" y="898" width="361" height="127" rx="12"/>
+  <text class="t" x="920" y="941">cairn/job branch (default)</text>
+  <text x="920" y="969">the daily job: one file</text>
+  <text class="g" x="920" y="997">it fetches the Cairn kit</text>
+
+  <rect class="box" x="502" y="1082" width="750" height="126" rx="12"/>
+  <text class="t" x="531" y="1125">daily job (GitHub Actions, about 6 minutes)</text>
+  <text x="531" y="1153">syncs the mirrors, audits the ledger, marks fixed findings,</text>
+  <text x="531" y="1181">refreshes changes, posts re-check tasks, renders the dashboard</text>
+
+  <path class="line" d="M248,778 V962 H499"/>
+  <text class="g" x="262" y="948">sync daily</text>
+  <path class="line" d="M877,1081 V873"/>
+  <path class="line" d="M1096,510 V655"/>
+</svg>

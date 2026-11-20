@@ -1,0 +1,11 @@
+{
+  "title": "Session token compared with == (timing leak)",
+  "claim": "verify_token compares secrets with ==, so response time leaks how much of a guessed token is right.",
+  "lens": "security",
+  "locs": [{"path": "src/auth/session.py", "lines": "41-45", "symbol": "verify_token"}],
+  "severity": "medium",
+  "confidence": "high",
+  "evidence": [{"type": "test", "detail": "tests/auth/test_timing.py::test_prefix_leak fails 50/50 runs"}],
+  "tags": ["timing", "tokens"],
+  "body": "## Repro\n\n    pytest tests/auth/test_timing.py::test_prefix_leak\n\n## Suggested fix\n\nUse `hmac.compare_digest(token, expected)`."
+}

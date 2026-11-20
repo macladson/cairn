@@ -1,0 +1,71 @@
+# Daily Cairn maintenance. Copy this file to .github/workflows/ on the default branch of the repo that holds the
+# notes (the cairn/ledger branch). That repo needs nothing else: the job downloads Cairn from CAIRN_KIT.
+# Companion setup (a private repo of notes for a public project): set `code_repo` in the ledger settings and the
+# job first copies the project's main and release branches from upstream.
+# Cost: one short job a day (about 6 minutes), whatever the agents do.
+name: cairn-daily
+on:
+  schedule:
+    - cron: "41 4 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: cairn-daily
+  cancel-in-progress: false
+jobs:
+  maintain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CAIRN_USER: github-actions[bot]
+      CAIRN_AGENT: ci
+      # Where the Cairn kit lives on GitHub, and which version to use (a tag such as v0.1.0 pins it).
+      # A repository variable of the same name overrides these.
+      CAIRN_KIT: ${{ vars.CAIRN_KIT || 'macladson/cairn' }}
+      CAIRN_KIT_REF: ${{ vars.CAIRN_KIT_REF || 'main' }}
+    steps:
+      - name: Clone the code and the ledger
+        run: |
+          git clone --quiet --no-checkout "${CAIRN_REPO_URL:-https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git}" code
+          cd code
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add cairn "$(git remote get-url origin)"
+          git config cairn.remote cairn
+      - name: Get Cairn
+        run: |
+          mkdir -p "$RUNNER_TEMP/cairn"
+          if git -C code cat-file -e HEAD:.cairn/cli/cairn.py 2>/dev/null; then
+            git -C code show HEAD:.cairn/cli/cairn.py > "$RUNNER_TEMP/cairn/cairn.py"
+            echo "using the copy of Cairn in this repo (.cairn/cli/cairn.py)"
+          else
+            if [ -z "${CAIRN_KIT_URL:-}" ] && [ "$CAIRN_KIT" = "OWNER/cairn" ]; then
+              echo "::error::Set CAIRN_KIT in this workflow file (or a repository variable CAIRN_KIT) to the GitHub repo that holds the Cairn kit"
+              exit 1
+            fi
+            git clone --quiet --depth 1 --branch "${CAIRN_KIT_REF:-main}" "${CAIRN_KIT_URL:-https://github.com/$CAIRN_KIT.git}" "$RUNNER_TEMP/cairn/kit"
+            cp "$RUNNER_TEMP/cairn/kit/cli/cairn.py" "$RUNNER_TEMP/cairn/cairn.py"
+            echo "using Cairn from ${CAIRN_KIT_URL:-$CAIRN_KIT} at ${CAIRN_KIT_REF:-main} ($(git -C "$RUNNER_TEMP/cairn/kit" rev-parse --short HEAD))"
+          fi
+          echo "CAIRN=python3 $RUNNER_TEMP/cairn/cairn.py -C $GITHUB_WORKSPACE/code" >> "$GITHUB_ENV"
+      - name: Sync the mirror from upstream (companion setups only)
+        run: |
+          S=$($CAIRN settings --json)
+          UP=$(echo "$S" | python3 -c 'import json,sys; print(json.load(sys.stdin)["effective"].get("code_repo") or "")')
+          if [ -n "$UP" ] && [ "$UP" != "${{ github.repository }}" ]; then
+            for b in $(echo "$S" | python3 -c 'import json,sys; e=json.load(sys.stdin)["effective"]; print(e["main_branch"], e.get("release_branch") or "")'); do
+              git -C code fetch --quiet "${CAIRN_UPSTREAM_URL:-https://github.com/$UP.git}" "+refs/heads/$b:refs/remotes/upstream/$b"
+              git -C code push --quiet origin "refs/remotes/upstream/$b:refs/heads/$b"
+            done
+          fi
+      - name: Maintain the ledger
+        run: |
+          FAIL=0
+          $CAIRN validate --since 3 || { echo "::error::Cairn audit found problems (see above)"; FAIL=1; }
+          $CAIRN fixes --since 3
+          $CAIRN work refresh --all --post-task || true
+          $CAIRN map check --post-task || true
+          $CAIRN recheck --post-tasks 5
+          $CAIRN render --commit
+          exit $FAIL

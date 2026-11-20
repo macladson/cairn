@@ -1,0 +1,7 @@
+{
+  "title": "http-latency at main",
+  "bench": "http-latency",
+  "areas": ["api"],
+  "env": {"class": "linux-x86_64-8c-16g-a41f", "os": "linux", "arch": "x86_64", "cores": 8, "mem_gb": 16},
+  "metrics": [{"name": "p50_ms", "unit": "ms", "better": "lower", "samples": [12.1, 11.8, 12.4]}]
+}

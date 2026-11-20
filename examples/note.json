@@ -1,0 +1,8 @@
+{
+  "title": "How range sync picks peers and batches",
+  "areas": ["sync"],
+  "locs": [{"path": "server/sync/range/chain.py", "symbol": "SyncingChain"}],
+  "summary": "One SyncingChain per (start, target); fixed-size batches are requested from peers on the chain and processed in order. Failed batches are retried with other peers up to a limit, then the chain is dropped.",
+  "body": "## Entry points\n...\n## Data flow\n...\n## Invariants\n...\n## Gotchas\n...\n## How to test\npytest tests/test_sync.py",
+  "assumptions": ["batches are processed strictly in order"]
+}

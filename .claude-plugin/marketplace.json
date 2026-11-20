@@ -1,0 +1,9 @@
+{
+  "name": "cairn",
+  "description": "Cairn: shared context between coding agents",
+  "owner": {"name": "Cairn maintainers"},
+  "plugins": [
+    {"name": "cairn", "source": "./adapters/claude-code",
+     "description": "Skill, hooks and CLI for a Cairn ledger: shared notes, findings and coverage injected automatically"}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "remote": "origin",
+  "branch": "cairn/ledger",
+  "main_remote": "origin",
+  "main_branch": "main",
+  "public": false,
+  "bots": ["github-actions[bot]", "cairn-bot"]
+}
